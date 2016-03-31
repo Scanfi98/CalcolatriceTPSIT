@@ -25,7 +25,13 @@ public class Calculator {
 
     }
 
-    private String risolviEquazione(String exp) throws Exception{
+    /**
+     * Risolve l'espressione
+     * @param exp espressione
+     * @return
+     * @throws Exception
+     */
+    private String risolviEquazione(String exp){
         exp = solveParentesi(exp);
         exp = solveComplexOp(exp);
         if(exp.equals("Espressione non valutabile")){
@@ -35,6 +41,11 @@ public class Calculator {
         }
     }
 
+    /**
+     * Risolve i calcoli più complessi dell'espressione passatagli
+     * @param exp espressione
+     * @return
+     */
     private String solveComplexOp(String exp){
         while (containsComplex(exp)){
         if(exp.contains("COS")){
@@ -95,17 +106,36 @@ public class Calculator {
     }
 
 
-
-    private String solveParentesi(String exp) throws Exception {
+    /**
+     * Avvia la risoluzione di ogni parentesi
+     * @param exp espressione
+     * @return
+     * @throws Exception
+     */
+    private String solveParentesi(String exp){
+        String precPar = "";
+        String postPar = "";
         if(exp.contains("(") && exp.contains(")")) {
-            exp = exp.substring(0, exp.indexOf(")"))+exp.substring(exp.indexOf(")") + 1);
-            exp = exp.substring(0, exp.indexOf("(")) + risolviEquazione(exp.substring(exp.indexOf("(") + 1));
+            int parClosePos = 0;
+            for(int i = 0; i < exp.length(); i++){
+                if(exp.charAt(i) == ')') parClosePos = i;
+            }
+            precPar = precPar + exp.substring(0, exp.indexOf("("));
+            postPar = postPar + exp.substring(parClosePos + 1);
+            exp = exp.substring(exp.indexOf("(") + 1, parClosePos);
+            precPar = precPar + risolviEquazione(exp) + postPar;
+            return precPar;
         } else if (exp.contains("(") || exp.contains(")")){
             return "Espressione non valutabile";
         }
         return exp;
     }
 
+    /**
+     * Risolve l'espressione a basso livello, cioè solo con le operazioni base
+     * @param exp espressione
+     * @return
+     */
     private String resolveLowDifficultExp(String exp){
         while (exp != "") {
             try{
@@ -122,10 +152,10 @@ public class Calculator {
                     numb = info[1];
                     switch (op) {
                         case '*':
-                            exp = (prov * Integer.parseInt(numb)) + exp;
+                            exp = (prov * Double.parseDouble(numb)) + exp;
                             break;
                         case '/':
-                            exp = (prov / Integer.parseInt(numb)) + exp ;
+                            exp = (prov / Double.parseDouble(numb)) + exp ;
                             break;
                     }
                 }}catch (Exception e){}
@@ -143,14 +173,30 @@ public class Calculator {
         return exp;
     }
 
+    /**
+     * Ritorna true se è un operando
+     * @param a
+     * @return
+     */
     private boolean isOperand(char a){
         return a == '*' || a == '/' || a == '+' || a == '-' ;
     }
 
+    /**
+     * Ritorna true se la priorità dell'operando è maggiore
+     * @param a
+     * @return
+     */
     private boolean priorityOperand(char a){
         return a == '*' || a == '/';
     }
 
+    /**
+     * Ritorna un array contenente in prima posizione l'espressione senza il primo numero
+     * in seconda posizione il numero scelto, il numero può avere valori positivi o negativi
+     * @param exp
+     * @return
+     */
     private String[] nextNumb(String exp) {
         String[] prov = new String[2];
         String numb = "";
@@ -168,6 +214,11 @@ public class Calculator {
         return prov;
     }
 
+    /**
+     * Risolve il fattoriale del numero
+     * @param num
+     * @return
+     */
     private double factorial(double num){
         double res = num;
         while(num > 1){
@@ -177,6 +228,12 @@ public class Calculator {
         return res;
     }
 
+    /**
+     * Restituisce il numero precedente a partire dall'index
+     * @param exp espressione
+     * @param index posizione
+     * @return
+     */
     private String precNumb(String exp, int index){
         String numb = "";
         char a = exp.charAt(index - 1);
@@ -187,6 +244,11 @@ public class Calculator {
         return numb;
     }
 
+    /**
+     * Restituisce true se il carattere è un numero
+     * @param a
+     * @return
+     */
     private boolean isNumber(char a){
         if(a == '.') return true;
         try{
@@ -197,6 +259,11 @@ public class Calculator {
         }
     }
 
+    /**
+     * Restituisce true se l'espressione contiene operazioni complesse
+     * @param exp espressione
+     * @return
+     */
     private boolean containsComplex(String exp){
         return exp.contains("COS") || exp.contains("SIN") || exp.contains("TAN") || exp.contains("COTAN") || exp.contains("LN") || exp.contains("^") || exp.contains("!") ||
                 exp.contains("e") || exp.contains("π") || exp.contains("√");

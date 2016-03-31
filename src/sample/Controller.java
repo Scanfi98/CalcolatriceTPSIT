@@ -35,6 +35,10 @@ public class Controller {
 
     private int lastOp;
 
+    /**
+     * Scrive nella TextBox
+     * @param event
+     */
     @FXML
     public void writeContent(ActionEvent event){
         JFXButton bt = (JFXButton) event.getSource();
@@ -42,6 +46,9 @@ public class Controller {
         tfBar.setText(tfBar.getText() + bt.getText());
     }
 
+    /**
+     * Cancella l'ultimo elemento della TextBox
+     */
     @FXML
     public void deleteTextBoxElement(){
         try{
@@ -51,6 +58,9 @@ public class Controller {
         }
     }
 
+    /**
+     * Cancella tutta la TextBob
+     */
     @FXML
     public void deleteTextBoxContent(){
         try{
@@ -60,6 +70,9 @@ public class Controller {
         }
     }
 
+    /**
+     * Utilizzato per il cambio di pannello
+     */
     @FXML
     public void changeState(){
         if(visibleOp){
@@ -75,6 +88,9 @@ public class Controller {
         }
     }
 
+    /**
+     * Esegue l'espressione
+     */
     @FXML
     public void expressionExecuter(){
         try {
@@ -84,6 +100,10 @@ public class Controller {
         }
     }
 
+    /**
+     * Event listener che gestisce la scrittura con tastierino
+     * @param event
+     */
     @FXML
     public void writeOnTF(KeyEvent event){
         String c = event.getText();
