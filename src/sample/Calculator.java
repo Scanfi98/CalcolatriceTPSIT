@@ -1,6 +1,5 @@
 package sample;
 
-import javafx.beans.binding.DoubleBinding;
 import javafx.scene.control.TextField;
 import sample.pila.EmptyStackException;
 import sample.pila.Stack;
@@ -10,19 +9,18 @@ import sample.pila.Stack;
  */
 public class Calculator {
 
-    private String exp;
-
     private Stack pilaNum;
 
-    private TextField tfBar;
+    public Calculator() throws Exception {
+        pilaNum = new Stack(100);
 
-    public Calculator(String exp, TextField tfBar) throws Exception {
-        this.exp = exp;
-        this.tfBar = tfBar;
-        pilaNum = new Stack(exp.length());
-        exp = risolviEquazione(exp);
-        tfBar.setText(exp);
+    }
 
+
+    public String execute(String exp){
+        exp = solveParentesi(exp);
+        exp = solveExpression(exp);
+        return exp;
     }
 
     /**
@@ -31,13 +29,13 @@ public class Calculator {
      * @return
      * @throws Exception
      */
-    private String risolviEquazione(String exp){
+    private String solveExpression(String exp){
         exp = solveParentesi(exp);
         exp = solveComplexOp(exp);
         if(exp.equals("Espressione non valutabile")){
             return exp;
         } else {
-             return resolveLowDifficultExp(exp);
+             return solveLowDifficultExp(exp);
         }
     }
 
@@ -113,20 +111,23 @@ public class Calculator {
      * @throws Exception
      */
     private String solveParentesi(String exp){
-        String precPar = "";
-        String postPar = "";
-        if(exp.contains("(") && exp.contains(")")) {
-            int parClosePos = 0;
-            for(int i = 0; i < exp.length(); i++){
-                if(exp.charAt(i) == ')') parClosePos = i;
+        int open;
+        int close;
+        if(!exp.contains("(") && !exp.contains(")")) return exp;
+        else while (exp.contains("(") && exp.contains(")")){
+            open = -1;
+            close = -1;
+
+            for (int i = 0; i < exp.length() && close == -1; i++){
+                if(exp.charAt(i) == '('){
+                    open = i;
+                } else if (exp.charAt(i) == ')'){
+                    close = i;
+                }
             }
-            precPar = precPar + exp.substring(0, exp.indexOf("("));
-            postPar = postPar + exp.substring(parClosePos + 1);
-            exp = exp.substring(exp.indexOf("(") + 1, parClosePos);
-            precPar = precPar + risolviEquazione(exp) + postPar;
-            return precPar;
-        } else if (exp.contains("(") || exp.contains(")")){
-            return "Espressione non valutabile";
+
+            if(open == -1 || close == -1) return "Espressione non valutabile";
+            else exp = exp.substring(0, open) + solveExpression(exp.substring(open+1, close)) + exp.substring(close+1);
         }
         return exp;
     }
@@ -136,7 +137,7 @@ public class Calculator {
      * @param exp espressione
      * @return
      */
-    private String resolveLowDifficultExp(String exp){
+    private String solveLowDifficultExp(String exp){
         while (exp != "") {
             try{
                 String[] info = nextNumb(exp);

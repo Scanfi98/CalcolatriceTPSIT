@@ -20,9 +20,6 @@ public class Controller {
     JFXToggleButton calcToggle;
 
     @FXML
-    JFXButton btCos;
-
-    @FXML
     TextField tfBar;
 
     @FXML
@@ -94,7 +91,8 @@ public class Controller {
     @FXML
     public void expressionExecuter(){
         try {
-            c = new Calculator(tfBar.getText(), tfBar);
+            c = new Calculator();
+            c.execute(tfBar.getText());
         } catch (Exception e) {
             e.printStackTrace();
         }
